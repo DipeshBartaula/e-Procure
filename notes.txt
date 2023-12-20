@@ -1,0 +1,4 @@
+First of all we create project with `npm init -y`
+Install packages `npm express nodemon mongoose dotenv bcryptjs
+dotenv is used to hold secret key 
+bcryptjs is used to hash password for Security considerations
