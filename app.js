@@ -6,6 +6,8 @@ const User = require("./model/userModel.js");
 //for hashing
 const bcrypt = require("bcryptjs");
 
+const jwt = require("jsonwebtoken");
+
 //Node will use DOTENV
 require("dotenv").config();
 
@@ -31,6 +33,16 @@ app.post("/register", async (req, res) => {
       message: "Provide email,name,phoneNumber,password",
     });
   }
+
+  //check if that user already exists
+  const userFound = await User.find({ userEmail: email });
+  if (userFound.length > 0) {
+    return res.status(400).json({
+      message: "User already registered",
+    });
+  }
+
+  //Registering user data
   await User.create({
     userEmail: email,
     userName: name,
@@ -40,6 +52,41 @@ app.post("/register", async (req, res) => {
   return res.status(200).json({
     message: "User registered successfully",
   });
+});
+
+//Login user api
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({
+      message: "Please provide email and password",
+    });
+  }
+
+  //check if user email exist
+  const userFound = await User.find({ userEmail: email });
+  if (userFound == 0) {
+    return res.status(404).json({
+      message: "User with that email is not registered",
+    });
+  }
+
+  //check password
+  const isMatched = bcrypt.compareSync(password, userFound[0].userPassword);
+  if (isMatched) {
+    // generate token
+    const token = jwt.sign({ id: userFound[0]._id }, process.env.SECRET_KEY, {
+      expiresIn: "30d",
+    });
+    res.status(200).json({
+      message: "User login successfully",
+      token,
+    });
+  } else {
+    res.status(404).json({
+      message: "Password doesn't match",
+    });
+  }
 });
 
 const port = process.env.PORT;
