@@ -4,3 +4,6 @@ Install packages `npm express nodemon mongoose dotenv bcryptjs jsonwebtoken node
 -bcryptjs is used to hash password for Security considerations
 -jsonwebtoken is used to identify an authenticated user
 -nodemailer is a module for Node.js applications to allow easy as cake email sending. For now we use to send otp to the email
+
+Data seeding is used for inserting admin credentials.
+promisify , you can create a function that returns a new Promise and handles the asynchronous operations and callback internally. (if need example: We use promisify in isAuthenticated middleware)
